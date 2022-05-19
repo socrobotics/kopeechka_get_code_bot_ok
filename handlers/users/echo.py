@@ -16,9 +16,12 @@ async def get_code(message: types.Message):
     if code == "Не приходит код на почту":
         await message.answer(f"Не приходит код на почту - {email[0]}",
                              reply_markup=types.ReplyKeyboardRemove())
+        return
     if code == "Нe удалось получить КОД с почты":
-        await message.answer(f"Нe удалось получить КОД с почты - {email[0]}, можешь попробовать повторить попытку",
+        await message.answer(f"Нe удалось получить КОД с почты - {email[0]}, можешь попробовать повторить попытку\n\n"
+                             f"Отправь мне снова свой email",
                              reply_markup=types.ReplyKeyboardRemove())
+        return
     if code is None:
         await message.answer(f"Укажи верный email",
                              reply_markup=types.ReplyKeyboardRemove())
@@ -38,6 +41,7 @@ async def close_app(message: types.Message):
 async def bot_echo(message: types.Message):
     text = message.text
     if "@" in text:
+        email.clear()
         email.append(text)
         await message.reply(f'Спасибо я получил твой email - {text}\n\n'
                             f'Теперь:\n\n'
@@ -48,6 +52,7 @@ async def bot_echo(message: types.Message):
                             f'Отправляй мне пожалуйста то что я говорю! Спасибо 😂')
 
     if len(text) == 32:
+        token.clear()
         token.append(text)
         await message.reply(f'Спасибо я получил твой токен - {text}\n\n'
                             f'Теперь отправь мне пожалуйста свой email')

@@ -35,13 +35,14 @@ def get_code_kopeechka(email, token):
         url = f'https://api.kopeechka.store/mailbox-get-message?full=1&id={new_id}&token={token}'
         n = 0
         while True:
-            if n > 20:
+            if n > 30:
                 return "Не приходит код на почту"
             r = requests.get(url=url, headers=headers).text
             status = re.search(r'(?<=status":").*?(?=")', r)[0].strip().lower()
             if status == "error" or status == "wait_link":
-                print(f'{r}')
-                time.sleep(5)
+                n += 1
+                print(f'{r} - #{n}')
+                time.sleep(2)
                 continue
 
             print(status)
