@@ -6,13 +6,20 @@ from handlers.users.get_code import get_code_kopeechka
 from keyboards.inline.menu import menu, menu_close, menu_again
 from loader import dp
 
+import threading
+
 token = []
 email = []
 
 
 @dp.message_handler(Text(contains="Код отправлен"))
 async def get_code(message: types.Message):
+    td = threading.Thread(target=get_code_kopeechka, name='SleepTime',
+                          args=(email[0], token[0]))
     code = get_code_kopeechka(email=email[0], token=token[0])
+    print("Запустил поток!")
+    td.start()
+    print("Вышел из потока!")
     if code == "Не приходит код на почту":
         await message.answer(f"Не приходит код на почту - {email[0]}",
                              reply_markup=types.ReplyKeyboardRemove())
@@ -47,6 +54,7 @@ async def bot_echo(message: types.Message):
                             f'Теперь:\n\n'
                             f'Открой свой Facebook аккаунт и нажми кнопку - <b>Отправить код</> или <b>Resend code</>\n\n'
                             f'👇После этого жми кнопку внизу - ✅ Код отправлен', reply_markup=menu)
+        return
     if " " in text.strip():
         await message.reply(f'{message.from_user.first_name}, я тут только за тем чтобы поработать!\n'
                             f'Отправляй мне пожалуйста то что я говорю! Спасибо 😂')
@@ -56,6 +64,10 @@ async def bot_echo(message: types.Message):
         token.append(text)
         await message.reply(f'Спасибо я получил твой токен - {text}\n\n'
                             f'Теперь отправь мне пожалуйста свой email')
+
+    if len(text) < 32 and text not in " " and text not in "@":
+        await message.reply(f'{message.from_user.first_name}, я тут только за тем чтобы поработать!\n'
+                            f'Отправляй мне пожалуйста то что я говорю! Спасибо 😂')
 
 
 # Эхо хендлер, куда летят ВСЕ сообщения с указанным состоянием
